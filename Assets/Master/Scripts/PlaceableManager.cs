@@ -4,14 +4,10 @@ using UnityEngine;
 
 namespace Lobser
 {
-
-    // Make this an enum and rename it
     public class States
     {
         public enum State { NONE, PLACING, INTERACTING };
     }
-
-   
 
     public class PlaceableManager : MonoBehaviour
     {
@@ -19,6 +15,8 @@ namespace Lobser
         private States.State prevState;
 
         public List<Placeable> placeables;
+        public Placeable[] placeableLibrary;
+        public int whichPlaceableToPlace;
 
         void Awake()
         {
@@ -28,7 +26,7 @@ namespace Lobser
 
         private void Start()
         {
-            //SwitchMode(state);
+
         }
 
         void Update()
@@ -45,11 +43,22 @@ namespace Lobser
             state = (state == States.State.INTERACTING) ? States.State.PLACING : States.State.INTERACTING;
         }
 
-            public void AddPlaceable(Placeable newPlaceable)
+        public void AddPlaceable(Placeable newPlaceable)
         {
             placeables.Add(newPlaceable);
             newPlaceable.state = state;
 
+            Debug.Log($"Added new Placeable object, state = {state}, count = {placeables.Count}");
+        }
+
+        public void CreatePlaceable(int which)
+        {
+            whichPlaceableToPlace = which;
+            Placeable p = Instantiate(placeableLibrary[whichPlaceableToPlace]);
+            placeables.Add(p);
+            p.state = state;
+            p.transformState = Placeable.TransformState.MOVING;
+            p.initialPlacement = true;
             Debug.Log($"Added new Placeable object, state = {state}, count = {placeables.Count}");
         }
 

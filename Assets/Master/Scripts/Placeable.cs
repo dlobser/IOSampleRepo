@@ -1,87 +1,8 @@
-﻿//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
-
-//namespace Lobser {
-//    public class Placeable : MonoBehaviour
-//    {
-
-//        public enum State { PLACING, INTERACTING };
-//        public State state;
-//        State prevState;
-
-//        public enum TransformState { MOVING, SCALING, ROTATING, NOTHING };
-//        public TransformState transformState;
-
-//        public GameObject artwork;
-//        public GameObject raycastTargets;
-
-//        public GameObject raycastMove;
-
-//        void Start()
-//        {
-//            transformState = TransformState.NOTHING;
-//            FindObjectOfType<PlaceableManager>().placeables.Add(this);
-//            Debug.Log(FindObjectOfType<PlaceableManager>().placeables);
-//        }
-
-//        void Update()
-//        {
-//            if (state == State.PLACING)
-//            {
-//                if (state != prevState)
-//                {
-//                    raycastTargets.SetActive(true);
-//                    EnableDisableColliders(false);
-//                }
-
-//                if (raycastMove.GetComponent<DetectPlaneRaycast>().isHitting)
-//                {
-//                    //raycastMove.GetComponent<Collider>().enabled = false;
-//                    FindObjectOfType<PlaceableManager>().DisableAllColliders();
-//                    transformState = TransformState.MOVING;
-//                }
-
-//                if(transformState == TransformState.MOVING)
-//                {
-//                    if (GameObject.Find("Plane").GetComponent<DetectPlaneRaycast>().isHitting)
-//                    {
-//                        this.transform.position = GameObject.Find("Plane").GetComponent<DetectPlaneRaycast>().hitPoint;
-//                    }
-//                }
-
-
-
-//            }
-
-//            if (state == State.INTERACTING)
-//            {
-//                if (state != prevState)
-//                {
-//                    raycastTargets.SetActive(false);
-//                    EnableDisableColliders(true);
-//                }
-//            }
-
-//            prevState = state;
-//        }
-
-//        void EnableDisableColliders(bool active)
-//        {
-//            Collider[] colliders = artwork.GetComponentsInChildren<Collider>();
-//            foreach (Collider c in colliders)
-//            {
-//                c.enabled = active;
-//            }
-//        }
-
-
-//    }
-//}
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARSubsystems;
+using UnityEngine.XR.ARFoundation;
 
 namespace Lobser
 {
@@ -93,6 +14,7 @@ namespace Lobser
 
         public enum TransformState { MOVING, SCALING, ROTATING, NOTHING };
         public TransformState transformState;
+        private TransformState prevTransformState;
 
         public GameObject artwork;
         public GameObject raycastTargets;
@@ -100,19 +22,20 @@ namespace Lobser
 
         private PlaceableManager placeableManager;
         private GameObject plane;
-        private DetectRaycast planeRaycastDetection;
-        private DetectRaycast raycastMoveDetection;
+
+        RaycastInteraction raycastInteraction;
+
+        public bool initialPlacement;
 
         void Start()
         {
-            transformState = TransformState.NOTHING;
+            //transformState = TransformState.NOTHING;
 
             placeableManager = FindObjectOfType<PlaceableManager>();
             placeableManager.AddPlaceable(this);
 
-            plane = GameObject.Find("Plane");
-            planeRaycastDetection = plane.GetComponent<DetectRaycast>();
-            raycastMoveDetection = raycastMove.GetComponent<DetectRaycast>();
+            //plane = GameObject.Find("Plane");
+            raycastInteraction = FindObjectOfType<RaycastInteraction>();
         }
 
         void Update()
@@ -127,26 +50,44 @@ namespace Lobser
                     EnableRaycastRenderers();
                 }
 
-                if (raycastMoveDetection.isHitting)
+                if (Input.GetMouseButtonDown(0) && raycastInteraction.hitObject==raycastMove)
                 {
                     placeableManager.DisableRaycastColliders();
                     transformState = TransformState.MOVING;
-                    Debug.Log("is down");
-                    //raycastMove.SetActive(false);
                 }
-                Debug.Log(transformState);
 
-                if (transformState == TransformState.MOVING)
+                if (transformState == TransformState.MOVING && prevTransformState == transformState && !initialPlacement)
                 {
-                    if (planeRaycastDetection.isHitting && Input.GetMouseButton(0))
+                    if (/*raycastInteraction.hitObject.name=="Plane"*/ raycastInteraction.hitObject.GetComponent<ARPlane>() != null  && Input.GetMouseButton(0))
                     {
-                        //print("Raycast hitting the plane: " + planeRaycastDetection.hitPoint);
-                        transform.position = raycastMoveDetection.hitPoint;
+                        transform.position = raycastInteraction.hitPosition;
                     }
                     else
                     {
                         transformState = TransformState.NOTHING;
                         placeableManager.EnableRaycastColliders();
+                    }
+                }
+
+                if (transformState == TransformState.MOVING && initialPlacement)
+                {
+                    raycastInteraction.Raycast(false);
+                    if (raycastInteraction.hitObject != null)
+                    {
+
+                        if (raycastInteraction.hitObject.GetComponent<ARPlane>()!=null)// == "Plane")
+                        {
+                            placeableManager.DisableRaycastColliders();
+                            transform.position = raycastInteraction.hitPosition;
+                            Debug.Log(raycastInteraction.hitPosition);
+                        }
+                        if (Input.GetMouseButtonUp(0))
+                        {
+                            raycastInteraction.useMouse = true;
+                            transformState = TransformState.NOTHING;
+                            placeableManager.EnableRaycastColliders();
+                            initialPlacement = false;
+                        }
                     }
                 }
             }
@@ -161,6 +102,7 @@ namespace Lobser
                 }
             }
 
+            prevTransformState = transformState;
             prevState = state;
         }
 
@@ -192,7 +134,6 @@ namespace Lobser
         public void DisableRaycastRenderers()
         {
             EnableDisableRenderers(raycastTargets, false);
-
         }
 
         private void EnableDisableColliders(GameObject targetGameObject, bool isEnabled)
