@@ -27,6 +27,7 @@ Shader "Unlit/Rotation Handle UI Shader"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float3 normal : NORMAL;
             };
 
             struct v2f
@@ -34,6 +35,7 @@ Shader "Unlit/Rotation Handle UI Shader"
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
+                float3 normal : NORMAL;
             };
 
             sampler2D _MainTex;
@@ -46,6 +48,7 @@ Shader "Unlit/Rotation Handle UI Shader"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
+                o.normal = COMPUTE_VIEW_NORMAL;
                 return o;
             }
 
@@ -53,6 +56,7 @@ Shader "Unlit/Rotation Handle UI Shader"
             {
                 // sample the texture
                 fixed4 col = _MainColour;
+                clip((1-i.normal.z)-.4);
                 return col;
             }
             ENDCG

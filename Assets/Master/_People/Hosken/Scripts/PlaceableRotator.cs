@@ -20,9 +20,11 @@ namespace Hosken
         Transform pivot;
         Transform camTransform;
 
+        public float speed = 1;
+
         void Start()
         {
-            pivot = transform.Find("Pivot");        // Find pivot object in children. Use Pivot as container for whatever models are added.
+            pivot = this.transform;// transform.Find("Pivot");        // Find pivot object in children. Use Pivot as container for whatever models are added.
             camTransform = Camera.main.transform;   // Use camera X axis to rotate 'up and down'
 
         }
@@ -31,9 +33,9 @@ namespace Hosken
         {
             Vector2 axis = MouseDraggedAxis.current.GetMouseDraggedAxis();  
 
-            pivot.Rotate(-1 * Vector3.up * axis.x, Space.World);
+            pivot.Rotate(-1 * Vector3.up * axis.x * speed, Space.World);
             
-            if (!rotateYOnly) pivot.Rotate(camTransform.right * axis.y, Space.World);
+            if (!rotateYOnly) pivot.Rotate(camTransform.right * axis.y * speed, Space.World);
             
         }
 
