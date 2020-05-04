@@ -849,6 +849,7 @@ GameObject:
   - component: {fileID: 1047850104}
   - component: {fileID: 1047850103}
   - component: {fileID: 1047850107}
+  - component: {fileID: 1047850108}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -947,6 +948,20 @@ MonoBehaviour:
   isHitting: 0
   isDown: 0
   debug: 0
+--- !u!114 &1047850108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047850102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f66da7470dce8f4d821d71dd2b1d4ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DestroyOnRemoval: 1
+  m_VertexChangedThreshold: 0.01
 --- !u!1 &1169224137
 GameObject:
   m_ObjectHideFlags: 0
@@ -1021,7 +1036,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1169224137}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6d803b2636964e63807f20048e029ff, type: 3}
   m_Name: 
@@ -1060,7 +1075,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 
   useMouse: 1
-  alwaysActive: 0
+  alwaysActive: 1
   button: {fileID: 1169224139}
 --- !u!114 &1169224142
 MonoBehaviour:
@@ -1249,7 +1264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 
   useMouse: 1
-  alwaysActive: 0
+  alwaysActive: 1
   button: {fileID: 1250688593}
 --- !u!114 &1250688593
 MonoBehaviour:
@@ -1258,7 +1273,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250688587}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6d803b2636964e63807f20048e029ff, type: 3}
   m_Name: 
