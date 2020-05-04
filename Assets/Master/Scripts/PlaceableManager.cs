@@ -102,12 +102,13 @@ namespace Lobser
             }
         }
 
-        void DeleteAll()
+        public void DeleteAll()
         {
             for (int i = 0; i < placeables.Count; i++)
             {
                 Destroy(placeables[i].gameObject);
             }
+
             placeables = new List<Placeable>();
 
         }
