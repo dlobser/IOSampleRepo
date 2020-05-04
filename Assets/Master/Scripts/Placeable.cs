@@ -21,7 +21,6 @@ namespace Lobser
         public GameObject raycastMove;
 
         private PlaceableManager placeableManager;
-        private GameObject plane;
 
         RaycastInteraction raycastInteraction;
 
@@ -29,12 +28,9 @@ namespace Lobser
 
         void Start()
         {
-            //transformState = TransformState.NOTHING;
-
             placeableManager = FindObjectOfType<PlaceableManager>();
             placeableManager.AddPlaceable(this);
 
-            //plane = GameObject.Find("Plane");
             raycastInteraction = FindObjectOfType<RaycastInteraction>();
         }
 
@@ -44,7 +40,7 @@ namespace Lobser
             {
                 if (state != prevState)
                 {
-                    raycastTargets.SetActive(true);
+                    //raycastTargets.SetActive(true);
                     DisableArtColliders();
                     EnableRaycastColliders();
                     EnableRaycastRenderers();
@@ -58,7 +54,7 @@ namespace Lobser
 
                 if (transformState == TransformState.MOVING && prevTransformState == transformState && !initialPlacement)
                 {
-                    if (/*raycastInteraction.hitObject.name=="Plane"*/ raycastInteraction.hitObject.GetComponent<ARPlane>() != null  && Input.GetMouseButton(0))
+                    if (raycastInteraction.hitObject.GetComponent<ARPlane>() != null  && Input.GetMouseButton(0))
                     {
                         transform.position = raycastInteraction.hitPosition;
                     }
@@ -75,7 +71,7 @@ namespace Lobser
                     if (raycastInteraction.hitObject != null)
                     {
 
-                        if (raycastInteraction.hitObject.GetComponent<ARPlane>()!=null)// == "Plane")
+                        if (raycastInteraction.hitObject.GetComponent<ARPlane>()!=null)
                         {
                             placeableManager.DisableRaycastColliders();
                             transform.position = raycastInteraction.hitPosition;
